@@ -11,14 +11,14 @@ function mainMenu:init()
 	mainMenuBgm:setVolume(0.7)
 	mainMenuBgm:setPitch(1.1)
 	mainMenuBgm:play()
+
+	lightWorld = LightWorld({
+    	ambient = {55,55,55},       
+  	})
 end
 
 
 function mainMenu:draw()
-	local lightWorld = LightWorld({
-    	ambient = {55,55,55},       
-  	})
-
 	love.graphics.push()
     lightWorld:draw(function()
 			for i = 0, love.graphics.getWidth() / mainMenuBg:getWidth() do
@@ -37,9 +37,5 @@ function love.load()
 end
 
 function love.update(dt)
-
-end
-
-function love.draw()
 
 end
