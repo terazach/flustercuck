@@ -4,6 +4,26 @@ local GameState = require "gamestate"
 local mainMenu = {}
 local playGame = {}
 
+function love.load()
+	GameState.registerEvents()
+	GameState.switch(mainMenu)
+end
+
+function love.update(dt)
+
+end
+
+function printStats(cX, cY)
+   if love.keyboard.isDown("c") then
+      local coordsX = love.mouse.getX()
+      local coordsY = love.mouse.getY()
+      love.graphics.print("Mouse: " .. coordsX .. " , " .. coordsY, cX, cY)
+      love.graphics.print("FPS: "..tostring(love.timer.getFPS()), cX, cX+25)
+      love.graphics.print("DT: "..tostring(love.timer.getAverageDelta()), cX, cX+50)
+
+   end
+end
+
 function mainMenu:init()
 	mainMenuBgm = love.audio.newSource("res/mus/menu.mp3")
 
@@ -11,11 +31,10 @@ function mainMenu:init()
 	mainMenuLogo = love.graphics.newImage("res/tx/logo.png")
 	mainMenuButton = love.graphics.newImage("res/tx/button.png")
 
-	gameFont = love.graphics.newFont("res/Bitter-Regular.ttf", 25)
+	local gameFont = love.graphics.newFont("res/Bitter-Regular.ttf", 25)
 	love.graphics.setFont(gameFont);
 
 	mainMenuBgm:setVolume(0.1)
-	mainMenuBgm:setPitch(1.3)
 	mainMenuBgm:play()
 
 	lightWorld = LightWorld({
@@ -46,17 +65,21 @@ function mainMenu:draw()
     love.graphics.draw(mainMenuButton, love.graphics.getWidth()/2, love.graphics.getHeight()/2+200, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2)
   	love.graphics.print("Exit", love.graphics.getWidth()/2+230, love.graphics.getHeight()/2+200, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2)
 
+    printStats(50, 50)
+
   	love.graphics.pop()
 end
 
-function mainMenu:update(dt)
+function mainMenu:keypressed(key)
+    if key == 'e' then
+        return GameState.switch(playGame) 
+    end
+
+    if key == 'escape' then
+        return love.event.quit()
+    end
 end
 
-function love.load()
-	GameState.registerEvents()
-	GameState.switch(mainMenu)
-end
-
-function love.update(dt)
-
+function playGame:init()
+  mainMenuBgm:stop()
 end
