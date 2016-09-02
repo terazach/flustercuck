@@ -3,8 +3,11 @@ local GameState = require "gamestate"
 
 local mainMenu = {}
 local playGame = {}
+local pauseMenu = {}
 
 function love.load()
+  love.mouse.setGrabbed(false)
+
 	GameState.registerEvents()
 	GameState.switch(mainMenu)
 end
@@ -34,8 +37,8 @@ function mainMenu:init()
 	local gameFont = love.graphics.newFont("res/Bitter-Regular.ttf", 25)
 	love.graphics.setFont(gameFont);
 
-	mainMenuBgm:setVolume(0.1)
-	mainMenuBgm:play()
+	--mainMenuBgm:setVolume(0.1)
+	--mainMenuBgm:play()
 
 	lightWorld = LightWorld({
     	ambient = {55,55,55},       
@@ -47,27 +50,27 @@ end
 
 function mainMenu:draw()
 	love.graphics.push()
-    lightWorld:draw(function()
-		for i = 0, love.graphics.getWidth() / mainMenuMap:getWidth() do
-			for j = 0, love.graphics.getHeight() / mainMenuMap:getHeight() do
-				love.graphics.draw(mainMenuMap, i * mainMenuMap:getWidth(), j * mainMenuMap:getHeight())
-			end
+  lightWorld:draw(function()
+    for i = 0, love.graphics.getWidth() / mainMenuMap:getWidth() do
+      for j = 0, love.graphics.getHeight() / mainMenuMap:getHeight() do
+        love.graphics.draw(mainMenuMap, i * mainMenuMap:getWidth(), j * mainMenuMap:getHeight())
+      end
 		end
-    end)
+  end)
 
-    love.graphics.draw(mainMenuLogo, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2)
+  love.graphics.draw(mainMenuLogo, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2)
     
-    --play button
-    love.graphics.draw(mainMenuButton, love.graphics.getWidth()/2, love.graphics.getHeight()/2+150, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2)
-    love.graphics.print("Play", love.graphics.getWidth()/2+230, love.graphics.getHeight()/2+150, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2 )
+  --play button
+  love.graphics.draw(mainMenuButton, love.graphics.getWidth()/2, love.graphics.getHeight()/2+150, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2)
+  love.graphics.print("Play", love.graphics.getWidth()/2+230, love.graphics.getHeight()/2+150, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2 )
 
     --exit button
-    love.graphics.draw(mainMenuButton, love.graphics.getWidth()/2, love.graphics.getHeight()/2+200, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2)
-  	love.graphics.print("Exit", love.graphics.getWidth()/2+230, love.graphics.getHeight()/2+200, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2)
+  love.graphics.draw(mainMenuButton, love.graphics.getWidth()/2, love.graphics.getHeight()/2+200, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2)
+  love.graphics.print("Exit", love.graphics.getWidth()/2+230, love.graphics.getHeight()/2+200, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2)
 
-    printStats(50, 50)
+  printStats(50, 50)
 
-  	love.graphics.pop()
+  love.graphics.pop()
 end
 
 function mainMenu:keypressed(key)
@@ -81,5 +84,44 @@ function mainMenu:keypressed(key)
 end
 
 function playGame:init()
+  love.mouse.setVisible(false)
   mainMenuBgm:stop()
+end
+
+function playGame:draw()
+  printStats(50, 50)
+
+  lightWorld:draw(function()
+    for i = 0, love.graphics.getWidth() / mainMenuMap:getWidth() do
+      for j = 0, love.graphics.getHeight() / mainMenuMap:getHeight() do
+        love.graphics.draw(mainMenuMap, i * mainMenuMap:getWidth(), j * mainMenuMap:getHeight())
+      end
+    end
+  end)
+end
+
+function playGame:keypressed(key)
+    if key == 'escape' then
+        return GameState.push(pauseMenu) 
+    end
+end
+
+function pauseMenu:enter(from)
+  self.from = from
+end
+
+function pauseMenu:draw()
+  self.from:draw()
+
+  love.graphics.draw(mainMenuLogo, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2)
+
+    --exit button
+  love.graphics.draw(mainMenuButton, love.graphics.getWidth()/2, love.graphics.getHeight()/2+200, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2)
+  love.graphics.print("Exit", love.graphics.getWidth()/2+230, love.graphics.getHeight()/2+200, 0, 1, 1, mainMenuLogo:getWidth()/2, mainMenuLogo:getHeight()/2)
+end
+
+function pauseMenu:keypressed(key)
+    if key == 'escape' then
+        return GameState.pop(playGame) 
+    end
 end

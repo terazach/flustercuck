@@ -1,0 +1,13 @@
+- main gamemode:
+	props start flying in from the sides, die if touched, gets faster as continues
+
+- server queue
+- server program
+- chat 
+
+- gui button function (main menu buttons)
+	something like guiButton.add(img, txt, x, y)
+	local playButton = ...
+	get playButton's location, check for mouse presses
+
+- make main menu pretty (background, scrolling?)
